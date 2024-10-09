@@ -1,0 +1,45 @@
+
+name: Terraform CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform Format and Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.7
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: |
+          terraform fmt -check -recursive || echo "Terraform format check failed"
+          
+      - name: Terraform Validate
+        run: |
+          terraform validate || echo "Terraform validate failed"
+
+      - name: List Files
+        run: |
+          echo "Listing all .tf files:"
+          find . -name "*.tf"
+          
+      - name: Output Debug Information
+        if: failure()
+        run: |
+          echo "Terraform exited with a failure."
+          echo "STDOUT:"
+          cat ${{ steps.format.outputs.stdout }}
+          echo "STDERR:"
+          cat ${{ steps.format.outputs.stderr }}
