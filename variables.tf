@@ -28,3 +28,9 @@ variable "availability_zones" {
   description = "List of Availability zones"
   type        = list(string)
 }
+
+variable "ami_id" {
+  description = "AMI image id"
+  type        = string
+}
+
