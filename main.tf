@@ -33,3 +33,16 @@ module "route_tables" {
   private_subnets     = module.subnets.private_subnet_ids
   internet_gateway_id = module.internet_gateway.igw_id
 }
+
+
+module "security_group" {
+  source              = "./modules/security-group"
+  vpc_id              = module.vpc.vpc_id
+}
+
+module "ec2" {
+  source              = "./modules/ec2"
+  public_subnets      = module.subnets.public_subnet_ids
+  security_group_id   = module.security_group.security_group_id
+  ami_id = var.ami_id
+}
