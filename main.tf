@@ -36,13 +36,30 @@ module "route_tables" {
 
 
 module "security_group" {
-  source              = "./modules/security-group"
-  vpc_id              = module.vpc.vpc_id
+  source = "./modules/security-group"
+  vpc_id = module.vpc.vpc_id
+}
+
+
+module "db-security-group" {
+  source            = "./modules/db-security-group"
+  vpc_id            = module.vpc.vpc_id
+  security_group_id = module.security_group.security_group_id
+}
+
+module "rds" {
+  source               = "./modules/rds"
+  parameter_group_id   = module.db-security-group.db_security_group_id
+  db_security_group_id = module.db-security-group.db_security_group_id
+  private_subnets      = module.subnets.private_subnet_ids
+  database_password    = var.database_password
 }
 
 module "ec2" {
-  source              = "./modules/ec2"
-  public_subnets      = module.subnets.public_subnet_ids
-  security_group_id   = module.security_group.security_group_id
-  ami_id = var.ami_id
+  source            = "./modules/ec2"
+  public_subnets    = module.subnets.public_subnet_ids
+  security_group_id = module.security_group.security_group_id
+  ami_id            = var.ami_id
+  rds_endpoint      = module.rds.rds_endpoint
+  database_password = var.database_password
 }

@@ -34,3 +34,8 @@ variable "ami_id" {
   type        = string
 }
 
+variable "database_password" {
+  description = "The password for the database user"
+  type        = string
+  sensitive   = true
+}
