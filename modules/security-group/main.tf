@@ -10,7 +10,7 @@ resource "aws_security_group" "application_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Allow from anywhere, you can restrict this if necessary
+    cidr_blocks = ["0.0.0.0/0"] # Allow from anywhere, you can restrict this if necessary
   }
 
   ingress {
@@ -31,7 +31,7 @@ resource "aws_security_group" "application_sg" {
 
   ingress {
     description = "Allow application traffic"
-    from_port   = 8080  # Change this to your application's port
+    from_port   = 8080 # Change this to your application's port
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
