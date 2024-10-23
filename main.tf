@@ -36,7 +36,7 @@ module "route_tables" {
 
 
 module "security_group" {
-  source = "./modules/security-group"
+  source = "./modules/application-security-group"
   vpc_id = module.vpc.vpc_id
 }
 
