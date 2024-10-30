@@ -23,3 +23,12 @@ variable "database_password" {
   type        = string
   sensitive   = true
 }
+
+variable "s3_bucket_id" {
+  description = "S3 Bucket ID"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "The AWS region where resources will be created"
+}
