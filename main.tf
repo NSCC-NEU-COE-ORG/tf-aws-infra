@@ -70,3 +70,4 @@ module "ec2" {
   s3_bucket_id      = module.s3-bucket.s3_bucket_id
   aws_region        = var.aws_region
 }
+
