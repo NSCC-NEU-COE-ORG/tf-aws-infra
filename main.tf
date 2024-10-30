@@ -35,7 +35,7 @@ module "route_tables" {
 }
 
 
-module "security_group" {
+module "application-security-group" {
   source = "./modules/application-security-group"
   vpc_id = module.vpc.vpc_id
 }
@@ -44,7 +44,7 @@ module "security_group" {
 module "db-security-group" {
   source            = "./modules/db-security-group"
   vpc_id            = module.vpc.vpc_id
-  security_group_id = module.security_group.security_group_id
+  security_group_id = module.application-security-group.security_group_id
 }
 
 module "rds" {
@@ -55,11 +55,19 @@ module "rds" {
   database_password    = var.database_password
 }
 
+module "s3-bucket" {
+  source       = "./modules/s3-bucket"
+  s3_bucket_id = module.s3-bucket.s3_bucket_id
+}
+
 module "ec2" {
   source            = "./modules/ec2"
   public_subnets    = module.subnets.public_subnet_ids
-  security_group_id = module.security_group.security_group_id
+  security_group_id = module.application-security-group.security_group_id
   ami_id            = var.ami_id
   rds_endpoint      = module.rds.rds_endpoint
   database_password = var.database_password
+  s3_bucket_id      = module.s3-bucket.s3_bucket_id
+  aws_region        = var.aws_region
 }
+
