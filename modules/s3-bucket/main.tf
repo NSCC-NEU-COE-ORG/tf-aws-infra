@@ -7,11 +7,6 @@ resource "aws_s3_bucket" "profile_pic_bucket" {
 
   # Enable force destroy to delete the bucket even if it has objects
   force_destroy = true
-
-  tags = {
-    Name        = "MyPrivateS3Bucket"
-    Environment = "Dev"
-  }
 }
 
 # Block all public access to the bucket
@@ -40,12 +35,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
   bucket = aws_s3_bucket.profile_pic_bucket.id
 
   rule {
-    id      = "transition-to-standard-ia"
-    enabled = true
+    id     = "lifecycle-rule"
+    status = "Enabled"
 
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
+    expiration {
+      days = 30
     }
   }
 }

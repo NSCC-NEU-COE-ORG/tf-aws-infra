@@ -49,15 +49,14 @@ module "db-security-group" {
 
 module "rds" {
   source               = "./modules/rds"
-  parameter_group_id   = module.db-security-group.db_security_group_id
+  parameter_group_id   = module.db-security-group.db_parameter_group_id
   db_security_group_id = module.db-security-group.db_security_group_id
   private_subnets      = module.subnets.private_subnet_ids
   database_password    = var.database_password
 }
 
 module "s3-bucket" {
-  source       = "./modules/s3-bucket"
-  s3_bucket_id = module.s3-bucket.s3_bucket_id
+  source = "./modules/s3-bucket"
 }
 
 module "ec2" {
@@ -69,5 +68,10 @@ module "ec2" {
   database_password = var.database_password
   s3_bucket_id      = module.s3-bucket.s3_bucket_id
   aws_region        = var.aws_region
+}
+
+module "route-53" {
+  source             = "./modules/route-53"
+  instance_public_ip = module.ec2.instance_public_ip
 }
 
