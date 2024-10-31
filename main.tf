@@ -57,7 +57,6 @@ module "rds" {
 
 module "s3-bucket" {
   source       = "./modules/s3-bucket"
-  s3_bucket_id = module.s3-bucket.s3_bucket_id
 }
 
 module "ec2" {
