@@ -7,11 +7,6 @@ resource "aws_s3_bucket" "profile_pic_bucket" {
 
   # Enable force destroy to delete the bucket even if it has objects
   force_destroy = true
-
-  tags = {
-    Name        = "MyPrivateS3Bucket"
-    Environment = "Dev"
-  }
 }
 
 # Block all public access to the bucket
