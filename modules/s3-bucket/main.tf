@@ -40,12 +40,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
   bucket = aws_s3_bucket.profile_pic_bucket.id
 
   rule {
-    id      = "transition-to-standard-ia"
-    enabled = true
+    id     = "lifecycle-rule"
+    status = "Enabled"
 
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
+    expiration {
+      days = 30
     }
   }
 }
