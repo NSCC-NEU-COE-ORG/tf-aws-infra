@@ -17,7 +17,7 @@ resource "aws_db_instance" "csye6225_rds" {
 
 
 resource "aws_db_subnet_group" "private_subnets" {
-  name       = "rds-private-subnet-group"
+  name       = "rds-pprivate-subnet-group"
   description = "Private subnet group for RDS"
   subnet_ids = var.private_subnets  # List of private subnet IDs
 

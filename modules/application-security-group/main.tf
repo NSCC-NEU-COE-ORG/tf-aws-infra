@@ -10,7 +10,7 @@ resource "aws_security_group" "application_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow from anywhere, you can restrict this if necessary
+    //cidr_blocks = ["0.0.0.0/0"] // Only form internal CIDRs
   }
 
   ingress {
@@ -18,7 +18,7 @@ resource "aws_security_group" "application_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [var.load_balancer_sg_id]
   }
 
   ingress {
@@ -26,7 +26,7 @@ resource "aws_security_group" "application_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [var.load_balancer_sg_id]
   }
 
   ingress {
@@ -34,7 +34,7 @@ resource "aws_security_group" "application_sg" {
     from_port   = 8080 # Change this to your application's port
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [var.load_balancer_sg_id]
   }
 
   egress {
@@ -49,4 +49,3 @@ resource "aws_security_group" "application_sg" {
     Name = "application-sg"
   }
 }
-
