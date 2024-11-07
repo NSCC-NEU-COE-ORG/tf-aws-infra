@@ -24,7 +24,7 @@ resource "aws_security_group" "db_security_group" {
 }
 
 resource "aws_db_parameter_group" "db_parameter_group" {
-  name        = "csye6225-db-parameter-group"
+  name        = "csye06225-db-parameter-group"
   family      = "mysql8.0" # For MySQL 8.0, or change for your DB engine and version
   description = "Custom parameter group for csye6225"
 

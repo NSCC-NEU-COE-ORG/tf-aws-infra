@@ -1,5 +1,5 @@
 resource "aws_iam_role" "cloudwatch_role" {
-  name = "ec2-cloudwatch-role"
+  name = "eec2-cloudwatch-role"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -15,7 +15,7 @@ resource "aws_iam_role" "cloudwatch_role" {
 }
 
 resource "aws_iam_policy" "cloudwatch_policy" {
-  name        = "cloudwatch-logs-metrics-policy"
+  name        = "ccloudwatch-logs-metrics-policy"
   description = "Policy for CloudWatch logs, metrics, and S3 access"
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -51,7 +51,7 @@ resource "aws_iam_role_policy_attachment" "attach_cloudwatch_policy" {
 
 # Instance Profile for attaching IAM Role to EC2
 resource "aws_iam_instance_profile" "cloudwatch_profile" {
-  name = "cloudwatch-instance-profile"
+  name = "ccloudwatch-instance-profile"
   role = aws_iam_role.cloudwatch_role.name
 }
 
@@ -59,7 +59,7 @@ resource "aws_iam_instance_profile" "cloudwatch_profile" {
 resource "aws_instance" "web_app" {
   ami                         = var.ami_id
   instance_type               = "t2.micro"
-  vpc_security_group_ids = [var.security_group_id]
+  vpc_security_group_ids      = [var.security_group_id]
   subnet_id                   = var.public_subnets[0]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.cloudwatch_profile.name
