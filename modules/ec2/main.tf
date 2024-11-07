@@ -59,7 +59,7 @@ resource "aws_iam_instance_profile" "cloudwatch_profile" {
 resource "aws_instance" "web_app" {
   ami                         = var.ami_id
   instance_type               = "t2.micro"
-  vpc_security_group_ids = [var.security_group_id]
+  vpc_security_group_ids      = [var.security_group_id]
   subnet_id                   = var.public_subnets[0]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.cloudwatch_profile.name

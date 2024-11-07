@@ -5,7 +5,7 @@ variable "vpc_id" {
 
 variable "load_balancer_sg_id" {
   description = "The Security Group ID for the Load Balancer"
-  type = string
+  type        = string
 }
 
 variable "cidr_block" {

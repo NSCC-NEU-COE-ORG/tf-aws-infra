@@ -1,14 +1,14 @@
 # Create the Application Load Balancer
 resource "aws_lb" "web_app_lb" {
-  name               = "web-app-lb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [var.security_group_id]
-  subnets            = var.public_subnets
+  name                       = "web-app-lb"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [var.security_group_id]
+  subnets                    = var.public_subnets
   enable_deletion_protection = false
 
   access_logs {
-    bucket = var.s3_bucket_id  # Specify the S3 bucket for access logs
+    bucket = var.s3_bucket_id # Specify the S3 bucket for access logs
   }
 
   enable_cross_zone_load_balancing = true
@@ -28,7 +28,7 @@ resource "aws_lb_target_group" "web_app_target_group" {
 
   health_check {
     interval            = 120
-    path                = "/healthz"  # You can specify your application's health check endpoint here
+    path                = "/healthz" # You can specify your application's health check endpoint here
     timeout             = 10
     healthy_threshold   = 10
     unhealthy_threshold = 10

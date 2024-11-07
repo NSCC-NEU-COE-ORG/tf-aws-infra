@@ -87,7 +87,7 @@ module "ec2-scale-deployment" {
 }
 
 module "route-53" {
-  source             = "./modules/route-53"
-  lb_dns_name        = module.application-load-balancer.lb_dns_name
-  lb_zone_id         = module.application-load-balancer.lb_zone_id
+  source      = "./modules/route-53"
+  lb_dns_name = module.application-load-balancer.lb_dns_name
+  lb_zone_id  = module.application-load-balancer.lb_zone_id
 }

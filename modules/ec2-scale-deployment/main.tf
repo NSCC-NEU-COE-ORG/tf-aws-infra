@@ -62,15 +62,15 @@ resource "aws_launch_template" "csye6225_asg_template" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups = [var.security_group_id]  # Use your web app security group
+    security_groups             = [var.security_group_id] # Use your web app security group
   }
 
   iam_instance_profile {
-    name = aws_iam_instance_profile.cloudwatch_profile.name  # Use the same IAM instance profile as EC2 instance
+    name = aws_iam_instance_profile.cloudwatch_profile.name # Use the same IAM instance profile as EC2 instance
   }
 
   # Encode user_data with base64encode
-  user_data = base64encode( <<-EOF
+  user_data = base64encode(<<-EOF
         #!/bin/bash
         echo "DB_URL=jdbc:mysql://${var.rds_endpoint}/healthzdb?createDatabaseIfNotExist=true" >> /etc/environment
         echo "DB_NAME=csye6225" >> /etc/environment
@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "web_app_asg" {
   desired_capacity    = 3
   max_size            = 5
   min_size            = 3
-  vpc_zone_identifier = var.public_subnets  # Subnet IDs for launching instances
+  vpc_zone_identifier = var.public_subnets # Subnet IDs for launching instances
 
   launch_template {
     id      = aws_launch_template.csye6225_asg_template.id

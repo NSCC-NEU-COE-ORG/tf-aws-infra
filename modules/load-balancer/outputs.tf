@@ -1,5 +1,5 @@
 output "web_app_target_group_arn" {
-  value = aws_lb_target_group.web_app_target_group.arn
+  value       = aws_lb_target_group.web_app_target_group.arn
   description = "The ARN of the target group for the web application"
 }
 

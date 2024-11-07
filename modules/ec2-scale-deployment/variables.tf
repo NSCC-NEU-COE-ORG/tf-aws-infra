@@ -34,6 +34,6 @@ variable "aws_region" {
 }
 
 variable "web_app_target_group_arn" {
-  type = string
+  type        = string
   description = "The ARN of the target group for the web application"
 }

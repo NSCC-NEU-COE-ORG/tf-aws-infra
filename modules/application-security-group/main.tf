@@ -14,26 +14,26 @@ resource "aws_security_group" "application_sg" {
   }
 
   ingress {
-    description = "Allow HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    description     = "Allow HTTP"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
     security_groups = [var.load_balancer_sg_id]
   }
 
   ingress {
-    description = "Allow HTTPS"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
+    description     = "Allow HTTPS"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
     security_groups = [var.load_balancer_sg_id]
   }
 
   ingress {
-    description = "Allow application traffic"
-    from_port   = 8080 # Change this to your application's port
-    to_port     = 8080
-    protocol    = "tcp"
+    description     = "Allow application traffic"
+    from_port       = 8080 # Change this to your application's port
+    to_port         = 8080
+    protocol        = "tcp"
     security_groups = [var.load_balancer_sg_id]
   }
 
