@@ -81,6 +81,7 @@ resource "aws_instance" "web_app" {
     echo "DB_PASSWORD=${var.database_password}" >> /etc/environment
     echo "AWS_S3_BUCKET=${var.s3_bucket_id}" >> /etc/environment
     echo "AWS_DEFAULT_REGION=${var.aws_region}" >> /etc/environment
+    echo "AWS_SNS_ARN_ID=${var.sns_topic_arn}" >> /etc/environment
     source /etc/environment
     # Restart cloudwatch agent to pick up new configs
     systemctl restart amazon-cloudwatch-agent

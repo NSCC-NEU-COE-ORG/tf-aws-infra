@@ -37,3 +37,8 @@ variable "web_app_target_group_arn" {
   type        = string
   description = "The ARN of the target group for the web application"
 }
+
+variable "sns_topic_arn" {
+  type        = string
+  description = "ARN of the SNS topic for email notifications"
+}
