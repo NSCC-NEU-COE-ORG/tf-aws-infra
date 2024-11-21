@@ -29,11 +29,6 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "ami_id" {
-  description = "AMI image id"
-  type        = string
-}
-
 variable "database_password" {
   description = "The password for the database user"
   type        = string
@@ -57,4 +52,10 @@ variable "mailgun_api_key" {
 
 variable "mailgun_domain_name" {
   default = ""
+}
+
+variable "domain_name" {
+  description = "The domain name for the lambda function. Defaults to the load balancer's DNS name if not provided."
+  type        = string
+  default     = null
 }

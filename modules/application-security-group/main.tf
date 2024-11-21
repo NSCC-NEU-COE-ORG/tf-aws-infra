@@ -29,13 +29,13 @@ resource "aws_security_group" "application_sg" {
     security_groups = [var.load_balancer_sg_id]
   }
 
-  ingress {
-    description     = "Allow application traffic"
-    from_port       = 8080 # Change this to your application's port
-    to_port         = 8080
-    protocol        = "tcp"
-    security_groups = [var.load_balancer_sg_id]
-  }
+#   ingress {
+#     description     = "Allow application traffic"
+#     from_port       = 8080 # Change this to your application's port
+#     to_port         = 8080
+#     protocol        = "tcp"
+#     security_groups = [var.load_balancer_sg_id]
+#   }
 
   egress {
     description = "Allow all outbound traffic"

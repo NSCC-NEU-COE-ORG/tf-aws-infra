@@ -78,7 +78,6 @@ module "ec2-scale-deployment" {
   source                   = "./modules/ec2-scale-deployment"
   public_subnets           = module.subnets.public_subnet_ids
   security_group_id        = module.security_group.security_group_id
-  ami_id                   = var.ami_id
   rds_endpoint             = module.rds.rds_endpoint
   database_password        = var.database_password
   s3_bucket_id             = module.s3-bucket.s3_bucket_id
@@ -103,7 +102,7 @@ module "lambda" {
   sns_topic_arn             = module.sns.sns_topic_arn
   s3_bucket_lambda_function = var.s3_bucket_lambda_function
   lambda_jar_key            = var.lambda_jar_key
-  domain_name               = module.application-load-balancer.lb_dns_name
+  domain_name               = var.domain_name != null ? var.domain_name : module.application-load-balancer.lb_dns_name
   mailgun_domain_name       = var.mailgun_domain_name
   mailgun_api_key           = var.mailgun_api_key
   aws_region                = var.aws_region

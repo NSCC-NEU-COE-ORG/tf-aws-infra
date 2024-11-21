@@ -55,6 +55,15 @@ resource "aws_iam_instance_profile" "cloudwatch_profile" {
   role = aws_iam_role.cloudwatch_role.name
 }
 
+data "aws_ami" "latest_ami" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["custom-healthz-application-*"]
+  }
+}
+
+
 # EC2 Instance configuration
 resource "aws_instance" "web_app" {
   ami                         = var.ami_id

@@ -33,6 +33,7 @@ resource "aws_iam_policy" "cloudwatch_policy" {
           "s3:PutObject",
           "s3:GetObject",
           "s3:ListBucket",
+          "s3:DeleteObject",
           "sns:Publish"
         ],
         "Resource" : [
@@ -55,10 +56,18 @@ resource "aws_iam_instance_profile" "cloudwatch_profile" {
   role = aws_iam_role.cloudwatch_role.name
 }
 
+data "aws_ami" "latest_ami" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["custom-healthz-application-*"]
+  }
+}
+
 # Launch Template
 resource "aws_launch_template" "csye6225_asg_template" {
   name          = "csye6225_asg"
-  image_id      = var.ami_id
+  image_id      = data.aws_ami.latest_ami.id
   instance_type = "t2.micro"
 
   network_interfaces {
@@ -93,6 +102,7 @@ resource "aws_launch_template" "csye6225_asg_template" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "web_app_asg" {
+  name = "web_app_asg"
   desired_capacity    = 3
   max_size            = 5
   min_size            = 3

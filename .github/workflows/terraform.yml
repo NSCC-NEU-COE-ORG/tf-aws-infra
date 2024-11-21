@@ -5,10 +5,12 @@ on:
   pull_request:
     branches:
       - main
-
+  push:
+    branches:
+      - main  # This ensures the post-merge steps are executed after the PR is merged into the main branch
 jobs:
-  terraform:
-    name: Terraform Format and Validate
+  pre-merge:
+    name: Terraform Format and Validate (Pre-Merge)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,8 +21,7 @@ jobs:
         with:
           terraform_version: 1.9.7
 
-      - name: Terraform Init
-        run: terraform init
+
 
       - name: Terraform Format Check
         run: |
@@ -43,3 +44,87 @@ jobs:
           cat ${{ steps.format.outputs.stdout }}
           echo "STDERR:"
           cat ${{ steps.format.outputs.stderr }}
+
+  post-merge:
+    name: Terraform Apply (Post-Merge)
+    runs-on: ubuntu-latest
+    needs: pre-merge  # Ensures that the pre-merge job completes successfully before running this one
+    if: github.ref == 'refs/heads/main'  # Runs only when the PR is merged into the main branch
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.7
+
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          aws --version
+
+      - name: Configure AWS CLI
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION}}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region $AWS_REGION
+
+      - name: Generate demo.tfvars dynamically
+        run: |
+          echo "aws_region = \"${{ vars.AWS_REGION }}\"" > demo.tfvars
+          echo "vpc_cidr = \"10.0.0.0/16\"" >> demo.tfvars
+          echo "vpc_name = \"demo-vpc\"" >> demo.tfvars
+          echo "public_subnets = [\"10.0.1.0/24\", \"10.0.2.0/24\", \"10.0.3.0/24\"]" >> demo.tfvars
+          echo "private_subnets = [\"10.0.4.0/24\", \"10.0.5.0/24\", \"10.0.6.0/24\"]" >> demo.tfvars
+          echo "availability_zones = [\"us-east-1a\", \"us-east-1b\", \"us-east-1c\"]" >> demo.tfvars
+          echo "gateway_name = \"demo-gateway\"" >> demo.tfvars
+          echo "database_password = \"${{ secrets.DATABASE_PASSWORD }}\"" >> demo.tfvars
+          echo "domain_name = \"${{ vars.DOMAIN_NAME }}\"" >> demo.tfvars
+          echo "s3_bucket_lambda_function = \"${{ vars.S3_BUCKET_LAMBDA_FUNCTION }}\"" >> demo.tfvars
+          echo "lambda_jar_key = \"${{ vars.LAMBDA_JAR_KEY }}\"" >> demo.tfvars
+          echo "mailgun_domain_name = \"${{ secrets.MAILGUN_DOMAIN_NAME }}\"" >> demo.tfvars
+          echo "mailgun_api_key = \"${{ secrets.MAILGUN_API_KEY }}\"" >> demo.tfvars
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=demo.tfvars -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -var-file=demo.tfvars -auto-approve
+
+      - name: Initiate Instance Refresh
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "web_app_asg" \
+            --preferences '{"MinHealthyPercentage": 100, "InstanceWarmup": 120}' \
+            --query "InstanceRefreshId" --output text)
+          echo "Instance refresh started with ID: $REFRESH_ID"
+          echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV        
+
+      - name: Wait for Instance Refresh to Complete
+        run: |
+          REFRESH_ID=${{ env.REFRESH_ID }}
+          ASG_NAME="web_app_asg"
+          STATUS=""
+
+          until [ "$STATUS" == "Successful" ] || [ "$STATUS" == "Failed" ]; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name "web_app_asg" \
+              --query "InstanceRefreshes[?InstanceRefreshId=='$REFRESH_ID'].Status | [0]" --output text)
+            echo "Current status: $STATUS"
+            if [ "$STATUS" == "Failed" ]; then
+              echo "Instance refresh failed. Exiting."
+              exit 1
+            fi
+            sleep 30
+          done
+          echo "Instance refresh completed successfully."
