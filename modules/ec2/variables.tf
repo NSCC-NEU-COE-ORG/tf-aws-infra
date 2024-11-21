@@ -32,3 +32,8 @@ variable "s3_bucket_id" {
 variable "aws_region" {
   description = "The AWS region where resources will be created"
 }
+
+variable "sns_topic_arn" {
+  type        = string
+  description = "ARN of the SNS topic for email notifications"
+}

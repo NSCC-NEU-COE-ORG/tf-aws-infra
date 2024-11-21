@@ -84,10 +84,27 @@ module "ec2-scale-deployment" {
   s3_bucket_id             = module.s3-bucket.s3_bucket_id
   aws_region               = var.aws_region
   web_app_target_group_arn = module.application-load-balancer.web_app_target_group_arn
+  sns_topic_arn            = module.sns.sns_topic_arn
 }
 
 module "route-53" {
   source      = "./modules/route-53"
   lb_dns_name = module.application-load-balancer.lb_dns_name
   lb_zone_id  = module.application-load-balancer.lb_zone_id
+}
+
+module "sns" {
+  source = "./modules/sns"
+}
+
+
+module "lambda" {
+  source                    = "./modules/lambda-functions"
+  sns_topic_arn             = module.sns.sns_topic_arn
+  s3_bucket_lambda_function = var.s3_bucket_lambda_function
+  lambda_jar_key            = var.lambda_jar_key
+  domain_name               = module.application-load-balancer.lb_dns_name
+  mailgun_domain_name       = var.mailgun_domain_name
+  mailgun_api_key           = var.mailgun_api_key
+  aws_region                = var.aws_region
 }

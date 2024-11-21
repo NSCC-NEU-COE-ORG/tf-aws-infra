@@ -39,3 +39,22 @@ variable "database_password" {
   type        = string
   sensitive   = true
 }
+
+variable "s3_bucket_lambda_function" {
+  description = "S3 bucket for Lambda deployment"
+  type        = string
+}
+
+variable "lambda_jar_key" {
+  description = "S3 object key for the Lambda function ZIP file"
+  type        = string
+}
+
+variable "mailgun_api_key" {
+  description = "SES source email for sending emails"
+  type        = string
+}
+
+variable "mailgun_domain_name" {
+  default = ""
+}
