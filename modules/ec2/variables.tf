@@ -8,11 +8,6 @@ variable "public_subnets" {
   type        = list(string)
 }
 
-variable "ami_id" {
-  description = "AMI image id"
-  type        = string
-}
-
 variable "rds_endpoint" {
   description = "RDS endpoint"
   type        = string
