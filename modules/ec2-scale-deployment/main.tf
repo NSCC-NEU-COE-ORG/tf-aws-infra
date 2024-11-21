@@ -102,7 +102,7 @@ resource "aws_launch_template" "csye6225_asg_template" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "web_app_asg" {
-  name = "web_app_asg"
+  name                = "web_app_asg"
   desired_capacity    = 3
   max_size            = 5
   min_size            = 3
