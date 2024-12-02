@@ -29,6 +29,7 @@ variable "availability_zones" {
   type        = list(string)
 }
 
+
 variable "database_password" {
   description = "The password for the database user"
   type        = string

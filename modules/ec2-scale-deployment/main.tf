@@ -34,7 +34,8 @@ resource "aws_iam_policy" "cloudwatch_policy" {
           "s3:GetObject",
           "s3:ListBucket",
           "s3:DeleteObject",
-          "sns:Publish"
+          "sns:Publish",
+          "secretsmanager:GetSecretValue"
         ],
         "Resource" : [
           "*",
@@ -62,6 +63,7 @@ data "aws_ami" "latest_ami" {
     name   = "name"
     values = ["custom-healthz-application-*"]
   }
+  owners = ["self"]
 }
 
 # Launch Template
@@ -85,10 +87,10 @@ resource "aws_launch_template" "csye6225_asg_template" {
         echo "DB_URL=jdbc:mysql://${var.rds_endpoint}/healthzdb?createDatabaseIfNotExist=true" >> /etc/environment
         echo "DB_NAME=csye6225" >> /etc/environment
         echo "DB_USERNAME=csye6225" >> /etc/environment
-        echo "DB_PASSWORD=${var.database_password}" >> /etc/environment
         echo "AWS_S3_BUCKET=${var.s3_bucket_id}" >> /etc/environment
         echo "AWS_DEFAULT_REGION=${var.aws_region}" >> /etc/environment
         echo "AWS_SNS_ARN_ID=${var.sns_topic_arn}" >> /etc/environment
+        echo "DB_PASSWORD=${var.database_password}" >> /etc/environment
         source /etc/environment
         # Restart cloudwatch agent to pick up new configs
         systemctl restart amazon-cloudwatch-agent
@@ -98,6 +100,10 @@ resource "aws_launch_template" "csye6225_asg_template" {
         fi
   EOF
   )
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Auto Scaling Group

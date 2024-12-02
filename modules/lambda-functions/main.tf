@@ -9,9 +9,8 @@ resource "aws_lambda_function" "email_sender_lambda" {
 
   environment {
     variables = {
-      MAILGUN_API_KEY = var.mailgun_api_key
-      MAILGUN_DOMAIN  = var.mailgun_domain_name
-      DOMAIN_NAME     = var.domain_name
+      SECRET_NAME = "email-service-credentials"
+      REGION      = var.aws_region
     }
   }
 
