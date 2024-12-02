@@ -5,11 +5,11 @@ resource "aws_lambda_function" "email_sender_lambda" {
   role          = aws_iam_role.lambda_execution_role.arn
   s3_bucket     = var.s3_bucket_lambda_function
   s3_key        = var.lambda_jar_key
-  timeout       = 30
+  timeout       = 90
 
   environment {
     variables = {
-      SECRET_NAME = "email-service-credentials"
+      SECRET_NAME = "email-service-credentials-v2"
       REGION      = var.aws_region
     }
   }
@@ -64,9 +64,13 @@ resource "aws_iam_policy" "lambda_execution_policy" {
         Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
         ],
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = "*"
       },
       {
         Effect = "Allow",

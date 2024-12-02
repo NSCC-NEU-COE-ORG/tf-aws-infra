@@ -1,31 +1,34 @@
 resource "aws_kms_key" "ec2_key" {
-  description             = "KMS key for EC2"
-  enable_key_rotation     = true
+  description         = "KMS key for EC2"
+  enable_key_rotation = true
 }
 
 resource "aws_kms_key" "rds_key" {
-  description             = "KMS key for RDS"
-  enable_key_rotation     = true
+  description         = "KMS key for RDS"
+  enable_key_rotation = true
 }
 
 resource "aws_kms_key" "s3_key" {
-  description             = "KMS key for S3"
-  enable_key_rotation     = true
+  description         = "KMS key for S3"
+  enable_key_rotation = true
 }
 
 resource "aws_kms_key" "secrets_key" {
-  description             = "KMS key for Secrets Manager"
-  enable_key_rotation     = true
+  description         = "KMS key for Secrets Manager"
+  enable_key_rotation = true
 }
 
 resource "aws_secretsmanager_secret" "db_password" {
-  name              = "rdsdbpassword"
-  kms_key_id        = aws_kms_key.secrets_key.id
+  name       = "rdsdbpassword-v2"
+  kms_key_id = aws_kms_key.secrets_key.id
 }
 
 resource "aws_secretsmanager_secret" "email_service" {
-  name              = "email-service-credentials"
-  kms_key_id        = aws_kms_key.secrets_key.id
+  name       = "email-service-credentials-v2"
+  kms_key_id = aws_kms_key.secrets_key.id
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "db_password_version" {
@@ -33,6 +36,9 @@ resource "aws_secretsmanager_secret_version" "db_password_version" {
   secret_string = jsonencode({
     password = var.database_password
   })
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "email_service_version" {
