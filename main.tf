@@ -7,6 +7,11 @@ resource "random_string" "suffix" {
   length = 6
 }
 
+resource "random_password" "db_password" {
+  length  = 16
+  special = true
+}
+
 module "vpc" {
   source     = "./modules/vpc"
   vpc_name   = var.vpc_name != "" ? var.vpc_name : "assignment-vpc-${random_string.suffix.result}"
@@ -106,4 +111,11 @@ module "lambda" {
   mailgun_domain_name       = var.mailgun_domain_name
   mailgun_api_key           = var.mailgun_api_key
   aws_region                = var.aws_region
+}
+
+module "kms" {
+  source              = "./modules/kms"
+  database_password   = random_password.db_password.result
+  mailgun_api_key     = var.mailgun_api_key
+  mailgun_domain_name = var.mailgun_domain_name
 }
